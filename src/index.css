@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-white text-slate-800 antialiased;
+    /* Native-app feel: prevent overscroll bounce except in scrollable containers */
+    overscroll-behavior: none;
+  }
+
+  /* Smooth scroll for scrollable containers */
+  .scroll-smooth-native {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Page container — full height minus bottom nav */
+  .page {
+    @apply flex flex-col min-h-[calc(100dvh-64px)] overflow-y-auto;
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100;
+  }
+
+  /* Orange primary button */
+  .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-semibold
+           rounded-xl px-5 py-3 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Secondary/outline button */
+  .btn-secondary {
+    @apply border border-slate-200 hover:border-brand-400 text-slate-700 font-medium
+           rounded-xl px-5 py-3 transition-colors duration-150;
+  }
+
+  /* Input field */
+  .input {
+    @apply w-full border border-slate-200 rounded-xl px-4 py-3 text-sm
+           focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent
+           placeholder:text-slate-400 transition;
+  }
+}
+
+/* Hide scrollbar visually but keep scroll functionality */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

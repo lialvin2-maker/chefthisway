@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="90" fill="url(#grad)" stroke="#cd7f32" stroke-width="8"/>
+  <defs>
+    <radialGradient id="grad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#4ade80"/>
+    </radialGradient>
+  </defs>
+  <text x="100" y="75" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="28" fill="white">CHEF</text>
+  <text x="100" y="150" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="20" fill="white">THIS WAY</text>
+</svg>
