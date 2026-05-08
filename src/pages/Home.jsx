@@ -6,6 +6,7 @@ import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { CATEGORIES, getDistance, isHighRiskPost } from '../lib/utils'
 import FoodCard from '../components/FoodCard'
+import AdSlot from '../components/AdSlot'
 import DefaultAvatar from '../components/DefaultAvatar'
 
 const DEFAULT_LOCATION = 'Toronto Area'
@@ -392,6 +393,9 @@ export default function Home() {
                 Post the first listing!
               </Link>
             )}
+            <div className="mt-8">
+              <AdSlot />
+            </div>
           </div>
         ) : (
           <>
@@ -448,11 +452,20 @@ export default function Home() {
               </div>
             )}
 
-            {/* Main grid */}
+            {/* Main grid — ad banner injected after every 4 cards */}
             <div className="grid grid-cols-2 gap-3">
-              {posts.filter(p => !p.is_boosted).map(post => (
-                <FoodCard key={post.id} post={post} compact />
-              ))}
+              {posts.filter(p => !p.is_boosted).flatMap((post, i) => {
+                const card = <FoodCard key={post.id} post={post} compact />
+                if ((i + 1) % 4 === 0) {
+                  return [
+                    card,
+                    <div key={`ad-${i}`} className="col-span-2">
+                      <AdSlot />
+                    </div>,
+                  ]
+                }
+                return [card]
+              })}
             </div>
           </>
         )}

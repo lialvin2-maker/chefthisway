@@ -5,6 +5,7 @@ import { Settings, ArrowLeft, Package, Heart, Trash2, Pencil } from 'lucide-reac
 import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import FoodCard from '../components/FoodCard'
+import AdSlot from '../components/AdSlot'
 import DefaultAvatar from '../components/DefaultAvatar'
 
 async function fetchProfile(id) {
@@ -226,6 +227,11 @@ export default function Profile() {
         </div>
       )}
 
+      {/* Ad — bottom of profile page */}
+      <div className="px-4 mt-4">
+        <AdSlot />
+      </div>
+
       {/* ── Delete confirmation modal ── */}
       {deletingId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
@@ -277,9 +283,14 @@ export default function Profile() {
               <p className="text-slate-400 text-sm mt-1">Tap the ❤️ on any listing to save it here</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {likedPosts.map(p => <FoodCard key={p.id} post={p} compact />)}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                {likedPosts.map(p => <FoodCard key={p.id} post={p} compact />)}
+              </div>
+              <div className="mt-4">
+                <AdSlot />
+              </div>
+            </>
           )}
         </div>
       )}

@@ -5,6 +5,7 @@ import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { formatDate } from '../lib/utils'
 import { useEffect } from 'react'
+import AdSlot from '../components/AdSlot'
 
 async function fetchConversations(userId) {
   const { data, error } = await supabaseData
@@ -50,6 +51,11 @@ export default function Inbox() {
       <div className="px-4 pt-12 pb-4 border-b border-slate-100 sticky top-0 bg-white z-10">
         <h1 className="text-xl font-bold text-slate-800">Inbox</h1>
         <p className="text-xs text-slate-500">{convs.length} conversation{convs.length !== 1 ? 's' : ''}</p>
+      </div>
+
+      {/* Ad banner — sits above messages, out of the way */}
+      <div className="px-4 pt-2">
+        <AdSlot />
       </div>
 
       {convs.length === 0 ? (
