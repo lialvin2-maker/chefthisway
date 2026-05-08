@@ -121,3 +121,49 @@ CREATE POLICY "Reviews are publicly readable" ON reviews FOR SELECT USING (true)
 - Domain registrar: Namecheap (chefthisway.com)
   - A record: @ → 75.2.60.5
   - CNAME: www → chefthisway.netlify.app
+
+---
+
+## Setting up on a new machine (e.g. Mac)
+
+### 1. Install Node.js
+Download and install from https://nodejs.org (LTS version).
+Verify: `node -v` and `npm -v` should both print version numbers.
+
+### 2. Clone the repo and install dependencies
+```bash
+git clone https://github.com/lialvin2-maker/chefthisway.git
+cd chefthisway
+npm install
+```
+
+### 3. Create the environment file
+Create a file called `.env.local` in the project root with this exact content:
+```
+VITE_SUPABASE_URL=https://uoqmdcyaoettswicvddh.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_4VFL2pdL5avwMiRr7m60_w_oIwdmm1z
+```
+This file is not in GitHub (intentionally). Without it the app will not connect to the database.
+
+### 4. Log in to Netlify CLI
+```bash
+npx netlify-cli login
+```
+This opens a browser — log in with the "No Time Audio" account (li.alvin2@gmail.com).
+
+### 5. Link to the correct Netlify site
+```bash
+npx netlify-cli link --id 65abd287-cb5e-4650-80ef-d39243e7f262
+```
+
+### 6. Verify everything works
+```bash
+npm run dev
+```
+Open http://localhost:5173 — the app should load and show real data from Supabase.
+
+### 7. Deploy (when ready)
+```bash
+npm run build
+npx netlify-cli deploy --dir=dist --prod
+```
