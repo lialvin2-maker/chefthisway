@@ -19,17 +19,14 @@ export default function AdSlot() {
   }, [])
 
   return (
-    <div className="w-full py-1">
+    <div className="ad-slot w-full py-1">
       <p className="text-center text-[9px] text-slate-300 uppercase tracking-widest mb-1 select-none">
         Advertisement
       </p>
       <ins
-        className="adsbygoogle"
-        style={{ display: 'block' }}
+        className="adsbygoogle ad-unit"
         data-ad-client="ca-pub-7875388851226483"
         data-ad-slot={AD_SLOT}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
       />
     </div>
   )
