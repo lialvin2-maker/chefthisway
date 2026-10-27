@@ -171,7 +171,7 @@ export default function Profile() {
               {isMe && <Link to="/create" className="btn-primary inline-block mt-3 text-sm">Create your first listing</Link>}
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="food-grid">
               {activePosts.map(p => (
                 <div key={p.id} className="relative">
                   <FoodCard post={p} compact />
@@ -199,7 +199,7 @@ export default function Profile() {
           {soldPosts.length > 0 && (
             <div className="mt-6">
               <h2 className="font-bold text-slate-700 mb-3">Sold</h2>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="food-grid">
                 {soldPosts.map(p => (
                   <div key={p.id} className="relative">
                     <FoodCard post={p} compact />
@@ -265,10 +265,10 @@ export default function Profile() {
             <Heart className="w-4 h-4 text-rose-500 fill-rose-500" /> Liked listings
           </h2>
           {likedLoading ? (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="food-grid">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="card animate-pulse">
-                  <div className="w-full h-36 bg-slate-200 rounded-t-2xl" />
+                  <div className="w-full aspect-square bg-slate-200" />
                   <div className="p-3 space-y-2">
                     <div className="h-3 bg-slate-200 rounded w-1/3" />
                     <div className="h-4 bg-slate-200 rounded w-2/3" />
@@ -284,7 +284,7 @@ export default function Profile() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="food-grid">
                 {likedPosts.map(p => <FoodCard key={p.id} post={p} compact />)}
               </div>
               <div className="mt-4">

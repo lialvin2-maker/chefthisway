@@ -45,9 +45,9 @@ export default function Categories() {
 
         <div className="px-4 py-4">
           {isLoading ? (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="food-grid">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="card animate-pulse h-52 bg-slate-200" />
+                <div key={i} className="card animate-pulse"><div className="w-full aspect-square bg-slate-200" /><div className="h-20" /></div>
               ))}
             </div>
           ) : posts.length === 0 ? (
@@ -56,7 +56,7 @@ export default function Categories() {
               <p className="text-slate-500">No {cat?.label} listings yet</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="food-grid">
               {posts.map(post => <FoodCard key={post.id} post={post} compact />)}
             </div>
           )}

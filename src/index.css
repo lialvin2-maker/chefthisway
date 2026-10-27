@@ -32,6 +32,11 @@
     @apply bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100;
   }
 
+  /* Listing card grid: 2 columns on phones, 4 from tablet up (Home puts an ad after every 4 cards, so rows stay full) */
+  .food-grid {
+    @apply grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4;
+  }
+
   /* Orange primary button */
   .btn-primary {
     @apply bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-semibold

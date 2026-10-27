@@ -7,18 +7,18 @@ export default function FoodCard({ post, compact = false }) {
   const photo = post.photos?.[0]
 
   return (
-    <Link to={`/post/${post.id}`} className="card block hover:shadow-md transition-shadow">
+    <Link to={`/post/${post.id}`} className="card group block hover:shadow-md transition-shadow">
       {/* Photo */}
-      <div className="relative">
+      <div className={`relative overflow-hidden ${compact ? 'aspect-square' : 'aspect-[4/3]'}`}>
         {photo ? (
           <img
             src={photo}
             alt={post.title}
-            className={compact ? 'w-full h-36 object-cover' : 'w-full h-52 object-cover'}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
         ) : (
-          <div className={`w-full ${compact ? 'h-36' : 'h-52'} bg-orange-50 flex items-center justify-center`}>
+          <div className="w-full h-full bg-orange-50 flex items-center justify-center">
             <img src="/logo.png" alt="ChefThisWay" className="w-16 h-16 object-contain opacity-40" />
           </div>
         )}

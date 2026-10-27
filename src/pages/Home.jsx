@@ -371,10 +371,10 @@ export default function Home() {
       {/* Content */}
       <div className="px-4 py-4">
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="food-grid">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="card animate-pulse">
-                <div className="w-full h-36 bg-slate-200 rounded-t-2xl" />
+                <div className="w-full aspect-square bg-slate-200" />
                 <div className="p-3 space-y-2">
                   <div className="h-3 bg-slate-200 rounded w-1/3" />
                   <div className="h-4 bg-slate-200 rounded w-2/3" />
@@ -441,7 +441,7 @@ export default function Home() {
                 <h2 className="text-sm font-bold text-slate-700 mb-2">⭐ Featured</h2>
                 <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
                   {posts.filter(p => p.is_boosted).map(post => (
-                    <div key={post.id} className="flex-shrink-0 w-64">
+                    <div key={post.id} className="flex-shrink-0 w-64 md:w-72">
                       <FoodCard post={post} />
                     </div>
                   ))}
@@ -450,13 +450,13 @@ export default function Home() {
             )}
 
             {/* Main grid — ad banner injected after every 4 cards */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="food-grid">
               {posts.filter(p => !p.is_boosted).flatMap((post, i) => {
                 const card = <FoodCard key={post.id} post={post} compact />
                 if ((i + 1) % 4 === 0) {
                   return [
                     card,
-                    <div key={`ad-${i}`} className="col-span-2">
+                    <div key={`ad-${i}`} className="col-span-full">
                       <AdSlot />
                     </div>,
                   ]
