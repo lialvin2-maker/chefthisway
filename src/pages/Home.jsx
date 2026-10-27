@@ -393,9 +393,6 @@ export default function Home() {
                 Post the first listing!
               </Link>
             )}
-            <div className="mt-8">
-              <AdSlot />
-            </div>
           </div>
         ) : (
           <>

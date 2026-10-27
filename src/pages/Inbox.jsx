@@ -53,10 +53,12 @@ export default function Inbox() {
         <p className="text-xs text-slate-500">{convs.length} conversation{convs.length !== 1 ? 's' : ''}</p>
       </div>
 
-      {/* Ad banner — sits above messages, out of the way */}
-      <div className="px-4 pt-2">
-        <AdSlot />
-      </div>
+      {/* Ad banner — only shown when there are real conversations */}
+      {convs.length > 0 && (
+        <div className="px-4 pt-2">
+          <AdSlot />
+        </div>
+      )}
 
       {convs.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-6 text-center">

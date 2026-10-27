@@ -53,12 +53,11 @@ export default function PostDetail() {
       if (!user) { navigate('/login'); return }
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { navigate('/login'); return }
+      // likes_count is kept in sync by the likes_count_sync trigger in the database
       if (liked) {
         await supabase.from('likes').delete().eq('user_id', session.user.id).eq('post_id', id)
-        await supabase.from('food_posts').update({ likes_count: (post.likes_count ?? 1) - 1 }).eq('id', id)
       } else {
         await supabase.from('likes').insert({ user_id: session.user.id, post_id: id })
-        await supabase.from('food_posts').update({ likes_count: (post.likes_count ?? 0) + 1 }).eq('id', id)
       }
       setLiked(!liked)
     },

@@ -161,3 +161,25 @@ CREATE POLICY "reviews_own_insert"    ON reviews FOR INSERT WITH CHECK (auth.uid
 -- ============================================================
 -- Bucket name: food-photos    | Public: YES
 -- Bucket name: avatars        | Public: YES
+
+-- ============================================================
+-- 2026-10-26: food_posts RLS was found switched OFF in the live project.
+-- Turn it on, and let the database keep likes_count in sync, because
+-- non-owners can no longer update food_posts from the browser.
+-- ============================================================
+ALTER TABLE food_posts ENABLE ROW LEVEL SECURITY;
+
+CREATE OR REPLACE FUNCTION sync_likes_count() RETURNS trigger
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  UPDATE food_posts
+     SET likes_count = (SELECT count(*) FROM likes WHERE post_id = COALESCE(NEW.post_id, OLD.post_id))
+   WHERE id = COALESCE(NEW.post_id, OLD.post_id);
+  RETURN NULL;
+END $$;
+
+DROP TRIGGER IF EXISTS likes_count_sync ON likes;
+CREATE TRIGGER likes_count_sync AFTER INSERT OR DELETE ON likes
+  FOR EACH ROW EXECUTE FUNCTION sync_likes_count();
+
+UPDATE food_posts p SET likes_count = (SELECT count(*) FROM likes l WHERE l.post_id = p.id);

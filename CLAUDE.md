@@ -29,6 +29,10 @@ npx netlify-cli deploy --dir=dist --prod
 The project is linked to Netlify site ID `65abd287-cb5e-4650-80ef-d39243e7f262` (site name: chefthisway).
 `public/_redirects` handles SPA routing — do not delete it.
 
+`netlify/functions/keepalive.mjs` is a daily scheduled function that reads one row from Supabase.
+Without it the free Supabase project pauses after 7 idle days and the feed loads forever
+(this happened in 2026; resumed 2026-10-26). The deploy command above picks it up automatically.
+
 ---
 
 ## Key files

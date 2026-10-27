@@ -15,6 +15,7 @@ import Inbox       from './pages/Inbox'
 import Chat        from './pages/Chat'
 import Login        from './pages/Login'
 import AuthCallback from './pages/AuthCallback'
+import Privacy      from './pages/Privacy'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -49,6 +50,7 @@ export default function App() {
       <Route path="/profile/:id" element={<Layout><Profile /></Layout>} />
       <Route path="/login"         element={<Login />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/privacy"       element={<Privacy />} />
 
       {/* Protected routes — login required */}
       <Route path="/create"         element={<ProtectedRoute><Layout><CreatePost /></Layout></ProtectedRoute>} />
