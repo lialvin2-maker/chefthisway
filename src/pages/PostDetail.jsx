@@ -147,11 +147,6 @@ export default function PostDetail() {
         </button>
       )}
 
-      {/* Ad slot — desktop only; uncomment / replace with real ad code when ready */}
-      <div className="hidden md:block bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-6 text-center">
-        <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-1">Sponsored</p>
-        <p className="text-sm text-slate-500">Your ad could be here</p>
-      </div>
     </div>
   )
 

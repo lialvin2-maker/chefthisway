@@ -441,7 +441,7 @@ export default function Home() {
                 if ((i + 1) % 4 === 0) {
                   return [
                     card,
-                    <div key={`ad-${i}`} className="col-span-full">
+                    <div key={`ad-${i}`} className="col-span-full empty:hidden">
                       <AdSlot />
                     </div>,
                   ]

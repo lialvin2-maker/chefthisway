@@ -276,7 +276,7 @@ export default function Profile() {
       )}
 
       {/* Ad — bottom of profile page */}
-      <div className="px-4 mt-4">
+      <div className="px-4 mt-4 empty:hidden">
         <AdSlot />
       </div>
 
@@ -335,7 +335,7 @@ export default function Profile() {
               <div className="food-grid">
                 {likedPosts.map(p => <FoodCard key={p.id} post={p} compact />)}
               </div>
-              <div className="mt-4">
+              <div className="mt-4 empty:hidden">
                 <AdSlot />
               </div>
             </>

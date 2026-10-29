@@ -58,7 +58,7 @@ export default function Inbox() {
 
       {/* Ad banner — only shown when there are real conversations */}
       {convs.length > 0 && (
-        <div className="px-4 pt-2">
+        <div className="px-4 pt-2 empty:hidden">
           <AdSlot />
         </div>
       )}

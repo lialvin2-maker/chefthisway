@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react' // useState kept for user/profile state
 import { supabase, supabaseData } from './supabase'
+import { nativeAppleSignIn } from './nativeApp'
 
 const AuthContext = createContext(null)
 
@@ -94,6 +95,20 @@ export function AuthProvider({ children }) {
     return { data, error }
   }
 
+  // iOS app only: native Apple sheet, then trade its ID token for a Supabase session
+  async function signInWithApple() {
+    const { idToken, nonce, fullName } = await nativeAppleSignIn()
+    const { data, error } = await supabase.auth.signInWithIdToken({ provider: 'apple', token: idToken, nonce })
+    if (error) throw error
+    // Apple sends the name only on the very first sign-in, and never inside the token
+    if (fullName && data.user) {
+      await supabase.auth.updateUser({ data: { full_name: fullName } })
+      await supabase.from('profiles').update({ full_name: fullName }).eq('id', data.user.id).is('full_name', null)
+      await fetchProfile(data.user.id)
+    }
+    return data
+  }
+
   async function signInWithEmail(email, password) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
@@ -120,7 +135,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, refreshProfile }}
+      value={{ user, profile, loading, signInWithGoogle, signInWithApple, signInWithEmail, signUpWithEmail, signOut, refreshProfile }}
     >
       {children}
     </AuthContext.Provider>
