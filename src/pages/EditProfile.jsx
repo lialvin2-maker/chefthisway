@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronLeft, Camera, LogOut } from 'lucide-react'
+import { ChevronLeft, Camera, LogOut, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 
@@ -19,6 +19,8 @@ export default function EditProfile() {
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState('')
   const [success, setSuccess]   = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   function set(k, v) { setForm(f => ({ ...f, [k]: v })) }
 
@@ -66,6 +68,31 @@ export default function EditProfile() {
   async function handleSignOut() {
     await signOut()
     navigate('/')
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true); setError('')
+    // Best effort: remove the user's uploads while still signed in. Storage
+    // files can't be deleted from SQL, and a failure here must not block deletion.
+    for (const bucket of ['food-photos', 'food-videos', 'review-photos']) {
+      try {
+        const { data } = await supabase.storage.from(bucket).list(user.id, { limit: 1000 })
+        if (data?.length) await supabase.storage.from(bucket).remove(data.map(f => `${user.id}/${f.name}`))
+      } catch { /* ignore */ }
+    }
+    try {
+      const { data } = await supabase.storage.from('avatars').list('avatars', { search: user.id })
+      if (data?.length) await supabase.storage.from('avatars').remove(data.map(f => `avatars/${f.name}`))
+    } catch { /* ignore */ }
+
+    const { error } = await supabase.rpc('delete_my_account')
+    if (error) {
+      setDeleting(false)
+      setError("We couldn't delete your account. Please try again, or email li.alvin2@gmail.com.")
+      return
+    }
+    await signOut().catch(() => {})
+    navigate('/', { replace: true })
   }
 
   return (
@@ -133,6 +160,47 @@ export default function EditProfile() {
           <LogOut className="w-4 h-4" /> Sign out
         </button>
       </form>
+
+      {/* Account deletion (App Store rule 5.1.1(v)) */}
+      <div className="px-4 pt-2">
+        <div className="border-t border-slate-100 pt-5">
+          {!confirmDelete ? (
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              className="w-full flex items-center justify-center gap-2 py-3 text-sm text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+            >
+              <Trash2 className="w-4 h-4" /> Delete account
+            </button>
+          ) : (
+            <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+              <p className="font-semibold text-red-700">Delete your account?</p>
+              <p className="text-sm text-red-600 mt-1">
+                This removes your profile, listings, photos, messages and reviews for good. It can't be undone.
+              </p>
+              {error && <p className="text-sm text-red-700 font-medium mt-2">{error}</p>}
+              <div className="flex gap-2 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(false)}
+                  disabled={deleting}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold disabled:opacity-60 transition-colors"
+                >
+                  {deleting ? 'Deleting…' : 'Delete forever'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

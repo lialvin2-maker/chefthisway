@@ -123,6 +123,12 @@ export default function Login() {
             {mode === 'signin' ? 'Sign up' : 'Sign in'}
           </button>
         </p>
+
+        <p className="text-center text-xs text-slate-400 mt-4">
+          By continuing you agree to our{' '}
+          <Link to="/privacy#rules" className="underline hover:text-brand-500">Community Rules</Link> and{' '}
+          <Link to="/privacy" className="underline hover:text-brand-500">Privacy Policy</Link>.
+        </p>
       </div>
     </div>
   )

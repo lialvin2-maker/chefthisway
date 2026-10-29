@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Settings, ArrowLeft, Package, Heart, Trash2, Pencil } from 'lucide-react'
+import { Settings, ArrowLeft, Package, Heart, Trash2, Pencil, MoreHorizontal, Flag, Ban } from 'lucide-react'
 import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import FoodCard from '../components/FoodCard'
 import AdSlot from '../components/AdSlot'
 import DefaultAvatar from '../components/DefaultAvatar'
+import ReportDialog from '../components/ReportDialog'
+import { useBlockedIds, useToggleBlock } from '../lib/blocks'
 
 async function fetchProfile(id) {
   const { data } = await supabaseData.from('profiles').select('*').eq('id', id).single()
@@ -49,6 +51,19 @@ export default function Profile() {
   const isMe = user?.id === id
   const [tab, setTab] = useState('Listings')
   const [deletingId, setDeletingId] = useState(null)
+  const [menuOpen, setMenuOpen]     = useState(false)
+  const [reportOpen, setReportOpen] = useState(false)
+  const blocked     = useBlockedIds()
+  const toggleBlock = useToggleBlock()
+  const isBlocked   = blocked.has(id)
+
+  async function handleBlock() {
+    setMenuOpen(false)
+    if (!user) { navigate('/login'); return }
+    if (!isBlocked && !confirm("Block this user? You won't see their listings or messages, and they can't message you.")) return
+    try { await toggleBlock(id, !isBlocked) }
+    catch { alert("Couldn't update the block. Please try again.") }
+  }
 
   const deleteMutation = useMutation({
     mutationFn: async (postId) => {
@@ -100,6 +115,26 @@ export default function Profile() {
             <Link to="/edit-profile" className="p-2 rounded-xl hover:bg-gray-100">
               <Settings className="w-5 h-5 text-slate-600" />
             </Link>
+          )}
+          {!isMe && (
+            <div className="relative">
+              <button onClick={() => setMenuOpen(o => !o)} className="p-2 rounded-xl hover:bg-gray-100" aria-label="More options" aria-expanded={menuOpen}>
+                <MoreHorizontal className="w-5 h-5 text-slate-600" />
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-1 w-48 bg-white rounded-2xl shadow-lg border border-slate-100 py-1 z-20">
+                  <button
+                    onClick={() => { setMenuOpen(false); user ? setReportOpen(true) : navigate('/login') }}
+                    className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-gray-50"
+                  >
+                    <Flag className="w-4 h-4" /> Report user
+                  </button>
+                  <button onClick={handleBlock} className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
+                    <Ban className="w-4 h-4" /> {isBlocked ? 'Unblock user' : 'Block user'}
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
@@ -158,8 +193,21 @@ export default function Profile() {
         </div>
       )}
 
+      {isBlocked && (
+        <div className="mx-4 mt-4 bg-white rounded-2xl border border-slate-100 p-5 text-center">
+          <Ban className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+          <p className="font-medium text-slate-700">You blocked this user</p>
+          <p className="text-sm text-slate-400 mt-1">Their listings are hidden and they can't message you.</p>
+          <button onClick={handleBlock} className="mt-3 text-sm font-semibold text-brand-600 hover:underline">Unblock</button>
+        </div>
+      )}
+
+      {reportOpen && (
+        <ReportDialog userId={id} title="Report user" onClose={() => setReportOpen(false)} />
+      )}
+
       {/* ── Listings tab ── */}
-      {tab === 'Listings' && (
+      {tab === 'Listings' && !isBlocked && (
         <div className="px-4 py-4">
           <h2 className="font-bold text-slate-700 mb-3">
             {isMe ? 'My Listings' : `${profile?.full_name?.split(' ')[0] ?? 'Their'}'s Listings`}

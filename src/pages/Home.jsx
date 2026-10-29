@@ -4,6 +4,7 @@ import { Search, MapPin, ChevronDown, X, Check, Navigation, SlidersHorizontal, S
 import { Link } from 'react-router-dom'
 import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { useBlockedIds } from '../lib/blocks'
 import { CATEGORIES, getDistance, isHighRiskPost } from '../lib/utils'
 import FoodCard from '../components/FoodCard'
 import AdSlot from '../components/AdSlot'
@@ -164,6 +165,7 @@ export default function Home() {
     }
   }, [locationPickerOpen])
 
+  const blocked = useBlockedIds()
   const { data: allPosts = [], isLoading } = useQuery({
     queryKey: ['posts', debouncedSearch],
     queryFn: () => fetchPosts({ search: debouncedSearch }),
@@ -175,6 +177,7 @@ export default function Home() {
   const selDiet    = [...selectedCategories].filter(k => DIET_KEYS.has(k))
 
   const filtered = allPosts.filter(p => {
+    if (blocked.has(p.seller_id)) return false
     const cats = String(p.category ?? '').split(',').map(c => c.trim()).filter(Boolean)
     const cuisineOk = selCuisine.length === 0 || selCuisine.some(k => cats.includes(k))
     const typeOk    = selType.length    === 0 || selType.some(k => cats.includes(k))

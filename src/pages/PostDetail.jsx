@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Heart, Bookmark, MessageCircle, Star, Share2, MapPin, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ArrowLeft, Heart, Bookmark, MessageCircle, Star, Share2, MapPin, ChevronLeft, ChevronRight, X, Flag } from 'lucide-react'
 import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { formatPrice, formatDate, CATEGORIES, isHighRiskPost, descriptionWithoutMarker } from '../lib/utils'
 import DefaultAvatar from '../components/DefaultAvatar'
+import ReportDialog from '../components/ReportDialog'
 
 async function fetchPost(id) {
   const { data, error } = await supabaseData.from('food_posts').select('*').eq('id', id).single()
@@ -29,6 +30,7 @@ export default function PostDetail() {
   const lightboxOpen = lightbox.photos.length > 0
   const [liked, setLiked]             = useState(false)
   const [saved, setSaved]             = useState(false)
+  const [reportOpen, setReportOpen]   = useState(false)
   const touchStartX = useRef(null)
 
   function openLightbox(photos, idx = 0) { setLightbox({ photos, idx }) }
@@ -79,11 +81,15 @@ export default function PostDetail() {
 
     if (existing) { navigate(`/chat/${existing.id}`); return }
 
-    const { data: conv } = await supabase
+    const { data: conv, error } = await supabase
       .from('conversations')
       .insert({ buyer_id: session.user.id, seller_id: post.seller_id, post_id: id, last_message: '', unread_buyer: 0, unread_seller: 0 })
       .select()
       .single()
+    if (error || !conv) {
+      alert(error?.message === 'blocked' ? "You can't message this seller." : "Couldn't open the chat. Please try again.")
+      return
+    }
     navigate(`/chat/${conv.id}`)
   }
 
@@ -123,6 +129,15 @@ export default function PostDetail() {
           </p>
         </div>
       </div>
+
+      {!isOwnPost && (
+        <button
+          onClick={() => user ? setReportOpen(true) : navigate('/login')}
+          className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-red-500 transition-colors px-1"
+        >
+          <Flag className="w-3.5 h-3.5" /> Report this listing
+        </button>
+      )}
 
       {/* Contact Seller button (right column on desktop; mobile uses the fixed bottom bar) */}
       {!isOwnPost && (
@@ -259,6 +274,10 @@ export default function PostDetail() {
           </div>
         </aside>
       </div>
+
+      {reportOpen && (
+        <ReportDialog postId={post.id} userId={post.seller_id} title="Report listing" onClose={() => setReportOpen(false)} />
+      )}
 
       {/* Fullscreen lightbox — works for both post photos and review photos */}
       {lightboxOpen && (

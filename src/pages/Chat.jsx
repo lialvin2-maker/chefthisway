@@ -6,6 +6,7 @@ import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { formatDate, reviewEligibility, REVIEW_COOLOFF_HOURS, isHighRiskPost } from '../lib/utils'
 import ReviewForm from '../components/ReviewForm'
+import { useBlockedIds } from '../lib/blocks'
 
 async function fetchConversation(id) {
   const { data } = await supabaseData
@@ -43,6 +44,8 @@ export default function Chat() {
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
   const [reviewOpen, setReviewOpen] = useState(false)
+  const [sendError, setSendError] = useState('')
+  const blocked = useBlockedIds()
 
   const { data: conv }          = useQuery({ queryKey: ['conv', id],  queryFn: () => fetchConversation(id) })
   const { data: messages = [] } = useQuery({ queryKey: ['msgs', id],  queryFn: () => fetchMessages(id), refetchInterval: 3000 })
@@ -79,18 +82,24 @@ export default function Chat() {
 
   async function sendMessage(e) {
     e.preventDefault()
-    if (!text.trim() || sending) return
+    if (!text.trim() || sending || isBlocked) return
     const content = text.trim()
     setText('')
     setSending(true)
+    setSendError('')
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { navigate('/login'); return }
-      await supabase.from('messages').insert({
+      const { error } = await supabase.from('messages').insert({
         conversation_id: id,
         sender_id: session.user.id,
         content,
       })
+      if (error) {
+        setText(content)
+        setSendError(error.message === 'blocked' ? "You can't message this person." : "Message not sent. Please try again.")
+        return
+      }
       // Update conversation last_message
       const isBuyer = conv?.buyer_id === session.user.id
       await supabase.from('conversations').update({
@@ -107,6 +116,8 @@ export default function Chat() {
   }
 
   const post = conv?.food_posts
+  const otherId = conv && (conv.buyer_id === user?.id ? conv.seller_id : conv.buyer_id)
+  const isBlocked = blocked.has(otherId)
   const reviewState = reviewEligibility({
     conversation:   conv,
     existingReview: myReview,
@@ -218,6 +229,12 @@ export default function Chat() {
       </div>
 
       {/* Input */}
+      {sendError && <p className="px-4 py-2 text-xs text-red-600 bg-red-50 border-t border-red-100">{sendError}</p>}
+      {isBlocked ? (
+        <p className="px-4 py-4 border-t border-slate-100 text-center text-sm text-slate-400" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
+          You blocked this user. Unblock them from their profile to chat again.
+        </p>
+      ) : (
       <form
         onSubmit={sendMessage}
         className="flex items-center gap-2 px-4 py-3 border-t border-slate-100 bg-white"
@@ -238,6 +255,7 @@ export default function Chat() {
           <Send className="w-4 h-4 text-white" />
         </button>
       </form>
+      )}
     </div>
   )
 }

@@ -183,3 +183,92 @@ CREATE TRIGGER likes_count_sync AFTER INSERT OR DELETE ON likes
   FOR EACH ROW EXECUTE FUNCTION sync_likes_count();
 
 UPDATE food_posts p SET likes_count = (SELECT count(*) FROM likes l WHERE l.post_id = p.id);
+
+-- ============================================================
+-- 2026-10-29: App Store rules 1.2 and 5.1.1(v).
+-- Users can report listings/users, block users, and delete their account.
+-- ============================================================
+
+-- Reports: anyone signed in can file one; only the owner reads them in the dashboard.
+CREATE TABLE IF NOT EXISTS reports (
+  id               UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  reporter_id      UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  post_id          UUID REFERENCES food_posts(id) ON DELETE SET NULL,
+  reported_user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  reason           TEXT NOT NULL,
+  details          TEXT,
+  status           TEXT NOT NULL DEFAULT 'open',
+  created_at       TIMESTAMPTZ DEFAULT NOW(),
+  CHECK (post_id IS NOT NULL OR reported_user_id IS NOT NULL)
+);
+ALTER TABLE reports ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "reports_own_insert" ON reports;
+CREATE POLICY "reports_own_insert" ON reports FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = reporter_id);
+
+-- Blocks: each user sees and edits only their own list.
+CREATE TABLE IF NOT EXISTS blocks (
+  blocker_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  blocked_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (blocker_id, blocked_id),
+  CHECK (blocker_id <> blocked_id)
+);
+ALTER TABLE blocks ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "blocks_own" ON blocks;
+CREATE POLICY "blocks_own" ON blocks FOR ALL TO authenticated
+  USING (auth.uid() = blocker_id) WITH CHECK (auth.uid() = blocker_id);
+
+-- A block in either direction stops new chats and new messages between the two users.
+CREATE OR REPLACE FUNCTION is_blocked_between(a UUID, b UUID) RETURNS boolean
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (SELECT 1 FROM blocks
+                  WHERE (blocker_id = a AND blocked_id = b) OR (blocker_id = b AND blocked_id = a));
+$$;
+REVOKE ALL ON FUNCTION is_blocked_between(UUID, UUID) FROM PUBLIC, anon, authenticated;
+
+CREATE OR REPLACE FUNCTION enforce_no_block() RETURNS trigger
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE c conversations%ROWTYPE;
+BEGIN
+  IF TG_TABLE_NAME = 'conversations' THEN
+    IF is_blocked_between(NEW.buyer_id, NEW.seller_id) THEN
+      RAISE EXCEPTION 'blocked' USING ERRCODE = 'P0001';
+    END IF;
+  ELSE
+    SELECT * INTO c FROM conversations WHERE id = NEW.conversation_id;
+    IF is_blocked_between(c.buyer_id, c.seller_id) THEN
+      RAISE EXCEPTION 'blocked' USING ERRCODE = 'P0001';
+    END IF;
+  END IF;
+  RETURN NEW;
+END $$;
+
+DROP TRIGGER IF EXISTS conversations_no_block ON conversations;
+CREATE TRIGGER conversations_no_block BEFORE INSERT ON conversations
+  FOR EACH ROW EXECUTE FUNCTION enforce_no_block();
+DROP TRIGGER IF EXISTS messages_no_block ON messages;
+CREATE TRIGGER messages_no_block BEFORE INSERT ON messages
+  FOR EACH ROW EXECUTE FUNCTION enforce_no_block();
+
+-- Account deletion. conversations, messages.sender_id and reviews have no
+-- ON DELETE CASCADE, so clear them first; deleting auth.users then cascades
+-- to profiles -> food_posts, likes, bookmarks, blocks.
+CREATE OR REPLACE FUNCTION delete_my_account() RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE uid UUID := auth.uid();
+BEGIN
+  IF uid IS NULL THEN RAISE EXCEPTION 'not signed in'; END IF;
+
+  DELETE FROM conversations
+   WHERE buyer_id = uid OR seller_id = uid
+      OR post_id IN (SELECT id FROM food_posts WHERE seller_id = uid);
+  DELETE FROM messages WHERE sender_id = uid;
+  DELETE FROM reviews
+   WHERE reviewer_id = uid OR seller_id = uid
+      OR post_id IN (SELECT id FROM food_posts WHERE seller_id = uid);
+  DELETE FROM auth.users WHERE id = uid;
+END $$;
+
+REVOKE ALL ON FUNCTION delete_my_account() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION delete_my_account() TO authenticated;

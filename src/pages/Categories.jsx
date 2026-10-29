@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { CATEGORIES } from '../lib/utils'
 import FoodCard from '../components/FoodCard'
+import { useBlockedIds } from '../lib/blocks'
 
 async function fetchByCategory(category) {
   const { data, error } = await supabase
@@ -23,11 +24,13 @@ export default function Categories() {
   const navigate = useNavigate()
   const [selected, setSelected] = useState(null)
 
-  const { data: posts = [], isLoading } = useQuery({
+  const blocked = useBlockedIds()
+  const { data: allPosts = [], isLoading } = useQuery({
     queryKey: ['posts-by-category', selected],
     queryFn: () => fetchByCategory(selected),
     enabled: !!selected,
   })
+  const posts = allPosts.filter(p => !blocked.has(p.seller_id))
 
   if (selected) {
     const cat = CATEGORIES.find(c => c.key === selected)

@@ -6,6 +6,7 @@ import { useAuth } from '../lib/AuthContext'
 import { formatDate } from '../lib/utils'
 import { useEffect } from 'react'
 import AdSlot from '../components/AdSlot'
+import { useBlockedIds } from '../lib/blocks'
 
 async function fetchConversations(userId) {
   const { data, error } = await supabaseData
@@ -22,11 +23,13 @@ export default function Inbox() {
   const navigate = useNavigate()
   const qc = useQueryClient()
 
-  const { data: convs = [], isLoading } = useQuery({
+  const blocked = useBlockedIds()
+  const { data: allConvs = [], isLoading } = useQuery({
     queryKey: ['conversations', user?.id],
     queryFn: () => fetchConversations(user.id),
     enabled: !!user,
   })
+  const convs = allConvs.filter(c => !blocked.has(c.buyer_id === user.id ? c.seller_id : c.buyer_id))
 
   // Real-time updates
   useEffect(() => {

@@ -1,8 +1,11 @@
-import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 
 export default function Privacy() {
   const navigate = useNavigate()
+  const { hash } = useLocation()
+  useEffect(() => { if (hash) document.getElementById(hash.slice(1))?.scrollIntoView() }, [hash])
 
   return (
     <div className="bg-white min-h-full pb-12">
@@ -91,8 +94,23 @@ export default function Privacy() {
           <ul className="list-disc pl-5 space-y-1">
             <li>You can update or delete your profile information at any time.</li>
             <li>You can delete your listings at any time.</li>
-            <li>You can request deletion of your account and associated data by contacting us.</li>
+            <li>You can delete your account and its data yourself: Profile → Settings → Delete account. You can also ask us by email.</li>
+            <li>You can block any user from their profile. You won't see their listings and they can't message you.</li>
           </ul>
+        </section>
+
+        <section id="rules">
+          <h2 className="font-bold text-slate-800 text-base mb-2">Community Rules</h2>
+          <p>By using ChefThisWay you agree to these rules. We have zero tolerance for objectionable content or abusive users.</p>
+          <ul className="list-disc pl-5 space-y-1 mt-2">
+            <li>No unsafe, spoiled or falsely described food.</li>
+            <li>No scams, fake listings or spam.</li>
+            <li>No harassment, hate, threats, or sexual or violent content.</li>
+          </ul>
+          <p className="mt-2">
+            Use "Report this listing" on a listing, or "Report user" on a profile, to flag a problem. We review reports within
+            24 hours, remove content that breaks these rules, and ban the users who posted it.
+          </p>
         </section>
 
         <section>
