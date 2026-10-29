@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Settings, ArrowLeft, Package, Heart, Trash2, Pencil, MoreHorizontal, Flag, Ban } from 'lucide-react'
+import { Settings, ArrowLeft, Heart, Trash2, Pencil, MoreHorizontal, Flag, Ban } from 'lucide-react'
 import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import FoodCard from '../components/FoodCard'
@@ -106,19 +106,22 @@ export default function Profile() {
   return (
     <div className="bg-gray-50 min-h-full pb-8">
       {/* Header */}
-      <div className="bg-white px-4 pt-12 pb-6">
-        <div className="flex items-center justify-between mb-4">
-          <button onClick={() => navigate(-1)} className="p-2 rounded-xl hover:bg-gray-100">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
+      <div className="bg-white px-4 pt-safe pb-6">
+        <div className="flex items-center justify-between mb-3 min-h-[40px]">
+          {/* Own profile is a tab root (bottom bar), so no back arrow there */}
+          {isMe ? <span /> : (
+            <button onClick={() => navigate(-1)} aria-label="Back" className="p-2.5 -ml-2.5 rounded-full hover:bg-gray-100 active:bg-gray-200">
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
           {isMe && (
-            <Link to="/edit-profile" className="p-2 rounded-xl hover:bg-gray-100">
+            <Link to="/edit-profile" aria-label="Settings" className="p-2.5 -mr-2.5 rounded-full hover:bg-gray-100 active:bg-gray-200">
               <Settings className="w-5 h-5 text-slate-600" />
             </Link>
           )}
           {!isMe && (
             <div className="relative">
-              <button onClick={() => setMenuOpen(o => !o)} className="p-2 rounded-xl hover:bg-gray-100" aria-label="More options" aria-expanded={menuOpen}>
+              <button onClick={() => setMenuOpen(o => !o)} className="p-2.5 -mr-2.5 rounded-full hover:bg-gray-100 active:bg-gray-200" aria-label="More options" aria-expanded={menuOpen}>
                 <MoreHorizontal className="w-5 h-5 text-slate-600" />
               </button>
               {menuOpen && (
@@ -143,19 +146,9 @@ export default function Profile() {
             ? <img src={profile.avatar_url} className="w-20 h-20 rounded-full object-cover border-4 border-brand-100" alt={profile.full_name} />
             : <DefaultAvatar name={profile?.full_name} className="w-20 h-20 text-3xl" />
           }
-          <div>
-            <h1 className="text-xl font-bold text-slate-800">{profile?.full_name ?? 'User'}</h1>
-            {profile?.bio && <p className="text-sm text-slate-500 mt-0.5">{profile.bio}</p>}
-            <div className="flex items-center gap-3 mt-2">
-              <span className="flex items-center gap-1 text-xs text-slate-500">
-                <Package className="w-3 h-3" /> {activePosts.length} active
-              </span>
-              {isMe && (
-                <span className="flex items-center gap-1 text-xs text-slate-500">
-                  <Heart className="w-3 h-3 text-rose-400" /> {likedPosts.length} liked
-                </span>
-              )}
-            </div>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight truncate">{profile?.full_name ?? 'User'}</h1>
+            {profile?.bio && <p className="text-sm text-slate-500 mt-1 line-clamp-3">{profile.bio}</p>}
           </div>
         </div>
       </div>
@@ -209,9 +202,11 @@ export default function Profile() {
       {/* ── Listings tab ── */}
       {tab === 'Listings' && !isBlocked && (
         <div className="px-4 py-4">
-          <h2 className="font-bold text-slate-700 mb-3">
-            {isMe ? 'My Listings' : `${profile?.full_name?.split(' ')[0] ?? 'Their'}'s Listings`}
-          </h2>
+          {!isMe && (
+            <h2 className="font-bold text-slate-700 mb-3">
+              {`${profile?.full_name?.split(' ')[0] ?? 'Their'}'s listings`}
+            </h2>
+          )}
           {activePosts.length === 0 ? (
             <div className="text-center py-10">
               <p className="text-3xl mb-2">🍽️</p>
@@ -227,15 +222,17 @@ export default function Profile() {
                     <div className="absolute top-2 right-2 flex gap-1">
                       <button
                         onClick={e => { e.preventDefault(); navigate(`/edit-post/${p.id}`) }}
-                        className="bg-white/90 backdrop-blur rounded-full p-1.5 shadow text-slate-400 hover:text-brand-500 transition-colors"
+                        aria-label="Edit listing"
+                        className="bg-white/95 backdrop-blur rounded-full p-2.5 shadow text-slate-600 hover:text-brand-500 active:scale-95 transition"
                       >
-                        <Pencil className="w-3.5 h-3.5" />
+                        <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={e => { e.preventDefault(); setDeletingId(p.id) }}
-                        className="bg-white/90 backdrop-blur rounded-full p-1.5 shadow text-slate-400 hover:text-red-500 transition-colors"
+                        aria-label="Delete listing"
+                        className="bg-white/95 backdrop-blur rounded-full p-2.5 shadow text-slate-600 hover:text-red-500 active:scale-95 transition"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   )}
@@ -255,15 +252,17 @@ export default function Profile() {
                       <div className="absolute top-2 right-2 flex gap-1">
                         <button
                           onClick={e => { e.preventDefault(); navigate(`/edit-post/${p.id}`) }}
-                          className="bg-white/90 backdrop-blur rounded-full p-1.5 shadow text-slate-400 hover:text-brand-500 transition-colors"
+                          aria-label="Edit listing"
+                          className="bg-white/95 backdrop-blur rounded-full p-2.5 shadow text-slate-600 hover:text-brand-500 active:scale-95 transition"
                         >
-                          <Pencil className="w-3.5 h-3.5" />
+                          <Pencil className="w-4 h-4" />
                         </button>
                         <button
                           onClick={e => { e.preventDefault(); setDeletingId(p.id) }}
-                          className="bg-white/90 backdrop-blur rounded-full p-1.5 shadow text-slate-400 hover:text-red-500 transition-colors"
+                          aria-label="Delete listing"
+                          className="bg-white/95 backdrop-blur rounded-full p-2.5 shadow text-slate-600 hover:text-red-500 active:scale-95 transition"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     )}

@@ -36,23 +36,18 @@ export default function FoodCard({ post, compact = false }) {
 
       {/* Info */}
       <div className="p-3">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <p className="text-xs text-brand-500 font-medium mb-0.5">
-              {getCategoryLabel(post.category)}
-            </p>
-            <h3 className="font-semibold text-slate-800 text-sm leading-tight truncate">
-              {post.title}
-            </h3>
-          </div>
-          {isHighRiskPost(post) ? (
-            <span className="text-xs font-semibold text-slate-400 italic whitespace-nowrap">Please contact</span>
-          ) : (
-            <span className="text-brand-600 font-bold text-sm whitespace-nowrap">
-              {formatPrice(post.price)}
-            </span>
-          )}
-        </div>
+        {/* Stacked, full width: side-by-side squeezed the title to a few letters on phones */}
+        <p className="text-xs text-brand-500 font-medium truncate">
+          {getCategoryLabel(post.category)}
+        </p>
+        <h3 className="font-semibold text-slate-800 text-sm leading-snug line-clamp-2 mt-0.5">
+          {post.title}
+        </h3>
+        {isHighRiskPost(post) ? (
+          <p className="text-xs font-medium text-slate-500 mt-1">Please contact</p>
+        ) : (
+          <p className="text-brand-600 font-bold text-sm mt-1">{formatPrice(post.price)}</p>
+        )}
 
         {!compact && (
           <p className="text-xs text-slate-500 mt-1 line-clamp-2">{descriptionWithoutMarker(post)}</p>

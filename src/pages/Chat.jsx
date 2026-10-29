@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Send, Star, Lock } from 'lucide-react'
 import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
-import { formatDate, reviewEligibility, REVIEW_COOLOFF_HOURS, isHighRiskPost } from '../lib/utils'
+import { formatDate, formatPrice, reviewEligibility, REVIEW_COOLOFF_HOURS, isHighRiskPost } from '../lib/utils'
 import ReviewForm from '../components/ReviewForm'
 import { useBlockedIds } from '../lib/blocks'
 
@@ -45,6 +45,7 @@ export default function Chat() {
   const [sending, setSending] = useState(false)
   const [reviewOpen, setReviewOpen] = useState(false)
   const [sendError, setSendError] = useState('')
+  const [hint, setHint] = useState('')
   const blocked = useBlockedIds()
 
   const { data: conv }          = useQuery({ queryKey: ['conv', id],  queryFn: () => fetchConversation(id) })
@@ -128,8 +129,8 @@ export default function Chat() {
   return (
     <div className="flex flex-col h-dvh bg-white">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 pt-12 pb-3 border-b border-slate-100 bg-white z-10">
-        <button onClick={() => navigate('/inbox')} className="p-2 rounded-xl hover:bg-gray-100">
+      <div className="flex items-center gap-3 px-4 pt-safe pb-3 border-b border-slate-100 bg-white z-10">
+        <button onClick={() => navigate('/inbox')} aria-label="Back" className="p-2.5 -ml-2.5 rounded-full hover:bg-gray-100 active:bg-gray-200">
           <ArrowLeft className="w-5 h-5" />
         </button>
         {post && (
@@ -143,7 +144,7 @@ export default function Chat() {
               <p className="text-xs text-brand-500">
                 {isHighRiskPost(post)
                   ? 'Please contact'
-                  : (post.price > 0 ? `$${post.price} CAD` : 'Free')}
+                  : formatPrice(post.price)}
               </p>
             </div>
           </Link>
@@ -170,7 +171,7 @@ export default function Chat() {
         )}
         {reviewState === 'locked' && (
           <button
-            onClick={() => alert(`You can leave a review ${REVIEW_COOLOFF_HOURS}h after first contacting the seller. Give it a little time!`)}
+            onClick={() => setHint(h => h ? '' : `You can leave a review ${REVIEW_COOLOFF_HOURS}h after first contacting the seller.`)}
             className="flex items-center gap-1 bg-gray-100 text-slate-400 text-xs font-semibold px-3 py-2 rounded-full flex-shrink-0"
           >
             <Lock className="w-3.5 h-3.5" />
@@ -178,6 +179,8 @@ export default function Chat() {
           </button>
         )}
       </div>
+
+      {hint && <p className="px-4 py-2 text-xs text-slate-600 bg-gray-50 border-b border-slate-100">{hint}</p>}
 
       {/* Review modal */}
       {reviewOpen && post && (
@@ -198,7 +201,7 @@ export default function Chat() {
         {messages.length === 0 && (
           <div className="text-center py-8">
             <p className="text-3xl mb-2">👋</p>
-            <p className="text-slate-500 text-sm">Say hello! Ask about the food, pickup time, or anything else.</p>
+            <p className="text-slate-500 text-sm">Say hello. Ask about the food, pickup time, or anything else.</p>
           </div>
         )}
         {messages.map((msg, i) => {
@@ -246,11 +249,14 @@ export default function Chat() {
           value={text}
           onChange={e => setText(e.target.value)}
           autoComplete="off"
+          enterKeyHint="send"
+          aria-label="Message"
         />
         <button
           type="submit"
           disabled={!text.trim() || sending}
-          className="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center flex-shrink-0 disabled:opacity-40 transition-opacity"
+          aria-label="Send"
+          className="w-11 h-11 rounded-full active:scale-95 bg-brand-500 flex items-center justify-center flex-shrink-0 disabled:opacity-40 transition-opacity"
         >
           <Send className="w-4 h-4 text-white" />
         </button>

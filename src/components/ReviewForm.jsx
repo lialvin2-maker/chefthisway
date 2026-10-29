@@ -100,7 +100,7 @@ export default function ReviewForm({ post, existingReview, onClose, onSuccess })
   return (
     <div className="fixed inset-0 z-[200] bg-white flex flex-col overflow-y-auto">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 pt-12 pb-3 border-b border-slate-100 sticky top-0 bg-white z-10">
+      <div className="flex items-center gap-3 px-4 pt-safe pb-3 border-b border-slate-100 sticky top-0 bg-white z-10">
         <button onClick={onClose} className="p-2 rounded-xl hover:bg-gray-100">
           <ChevronLeft className="w-5 h-5" />
         </button>

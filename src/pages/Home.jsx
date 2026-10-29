@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useBlockedIds } from '../lib/blocks'
-import { CATEGORIES, getDistance, isHighRiskPost } from '../lib/utils'
+import { CATEGORIES, getDistance, isHighRiskPost, postInCategory } from '../lib/utils'
 import FoodCard from '../components/FoodCard'
 import AdSlot from '../components/AdSlot'
 import DefaultAvatar from '../components/DefaultAvatar'
@@ -216,7 +216,7 @@ export default function Home() {
   const filtered = allPosts.filter(p => {
     if (blocked.has(p.seller_id)) return false
     const cats = String(p.category ?? '').split(',').map(c => c.trim()).filter(Boolean)
-    const cuisineOk = selCuisine.length === 0 || selCuisine.some(k => cats.includes(k))
+    const cuisineOk = selCuisine.length === 0 || selCuisine.some(k => postInCategory(p.category, k))
     const typeOk    = selType.length    === 0 || selType.some(k => cats.includes(k))
     const dietOk    = selDiet.length    === 0 || selDiet.some(k => cats.includes(k))
     if (!cuisineOk || !typeOk || !dietOk) return false

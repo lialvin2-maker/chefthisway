@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { MessageCircle } from 'lucide-react'
 import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
@@ -44,15 +44,26 @@ export default function Inbox() {
   }, [user])
 
   if (isLoading) return (
-    <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" />
+    <div className="bg-white min-h-full">
+      <div className="px-4 pt-safe pb-4 border-b border-slate-100">
+        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Inbox</h1>
+      </div>
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="flex items-center gap-3 px-4 py-3 animate-pulse">
+          <div className="w-14 h-14 rounded-xl bg-slate-200" />
+          <div className="flex-1 space-y-2">
+            <div className="h-3 bg-slate-200 rounded w-2/3" />
+            <div className="h-3 bg-slate-100 rounded w-1/2" />
+          </div>
+        </div>
+      ))}
     </div>
   )
 
   return (
     <div className="bg-white min-h-full">
-      <div className="px-4 pt-12 pb-4 border-b border-slate-100 sticky top-0 bg-white z-10">
-        <h1 className="text-xl font-bold text-slate-800">Inbox</h1>
+      <div className="px-4 pt-safe pb-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Inbox</h1>
         <p className="text-xs text-slate-500">{convs.length} conversation{convs.length !== 1 ? 's' : ''}</p>
       </div>
 
@@ -67,7 +78,8 @@ export default function Inbox() {
         <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
           <MessageCircle className="w-14 h-14 text-slate-200 mb-4" />
           <p className="text-slate-600 font-medium">No messages yet</p>
-          <p className="text-slate-400 text-sm mt-1">When you contact a seller or someone contacts you, it'll appear here.</p>
+          <p className="text-slate-400 text-sm mt-1 max-w-xs">When you contact a seller or someone contacts you, it'll appear here.</p>
+          <Link to="/" className="btn-primary text-sm py-2.5 mt-5">Browse food</Link>
         </div>
       ) : (
         <ul className="divide-y divide-slate-50">
@@ -82,7 +94,7 @@ export default function Inbox() {
               <li key={conv.id}>
                 <button
                   onClick={() => navigate(`/chat/${conv.id}`)}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left"
                 >
                   {/* Post thumbnail */}
                   <div className="relative flex-shrink-0">
@@ -107,7 +119,7 @@ export default function Inbox() {
                       </span>
                     </div>
                     <p className="text-xs text-slate-400 truncate mt-0.5">
-                      {isBuyer ? '👤 You → Seller' : '🛒 Buyer'}
+                      {other ? `${other} · ` : ''}{isBuyer ? 'Seller' : 'Buyer'}
                     </p>
                     {conv.last_message && (
                       <p className={`text-xs truncate mt-0.5 ${unread > 0 ? 'text-slate-700 font-medium' : 'text-slate-400'}`}>

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Camera, Video, X, ChevronLeft, MapPin, Check, Navigation } from 'lucide-react'
+import { Camera, Video, X, ArrowLeft, MapPin, Check, Navigation } from 'lucide-react'
 import { supabase, supabaseData } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { CATEGORIES, REFRIG_MARKER } from '../lib/utils'
@@ -274,11 +274,11 @@ export default function EditPost() {
 
   return (
     <div className="bg-white min-h-full pb-8">
-      <div className="flex items-center gap-3 px-4 pt-12 pb-4 border-b border-slate-100 sticky top-0 bg-white z-10">
-        <button onClick={() => navigate(-1)} className="p-2 rounded-xl hover:bg-gray-100">
-          <ChevronLeft className="w-5 h-5" />
+      <div className="flex items-center gap-3 px-4 pt-safe pb-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="p-2.5 -ml-2.5 rounded-full hover:bg-gray-100 active:bg-gray-200">
+          <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-lg font-bold">Edit Listing</h1>
+        <h1 className="text-lg font-bold">Edit listing</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="px-4 py-4 space-y-5">

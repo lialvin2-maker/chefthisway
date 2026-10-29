@@ -121,6 +121,19 @@ export function getCategoryLabel(keyOrKeys) {
   return labels.join(' · ')
 }
 
+// Umbrella keys: picking "Asian" also shows posts tagged with one Asian cuisine only
+const CATEGORY_CHILDREN = { asian: ['chinese', 'hong_kong', 'japanese', 'korean', 'vietnamese', 'thai'] }
+
+export function categoryKeysFor(key) {
+  return [key, ...(CATEGORY_CHILDREN[key] ?? [])]
+}
+
+// post.category holds one key or a comma list ("indian,hot_mains")
+export function postInCategory(postCategory, key) {
+  const cats = String(postCategory ?? '').split(',').map(c => c.trim())
+  return categoryKeysFor(key).some(k => cats.includes(k))
+}
+
 export function getCategoryEmoji(key) {
   return CATEGORIES.find(c => c.key === key)?.emoji ?? ''
 }

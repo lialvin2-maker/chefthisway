@@ -286,7 +286,7 @@ export default function PostDetail() {
           onTouchEnd={handleTouchEnd}
         >
           {/* Top bar — close on left, counter on right */}
-          <div className="flex items-center justify-between px-4 pt-12 pb-3 flex-shrink-0">
+          <div className="flex items-center justify-between px-4 pt-safe pb-3 flex-shrink-0">
             <button onClick={closeLightbox} className="p-2 rounded-full bg-white/10 active:bg-white/20">
               <X className="w-5 h-5 text-white" />
             </button>

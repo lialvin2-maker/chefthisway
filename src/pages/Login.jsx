@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react'
+import { Eye, EyeOff, X } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { isNativeApp } from '../lib/nativeApp'
 
@@ -52,10 +52,14 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Back */}
-      <div className="px-4 pt-12">
-        <button onClick={() => navigate('/')} className="p-2 rounded-xl hover:bg-gray-100 -ml-2">
-          <ArrowLeft className="w-5 h-5" />
+      {/* Close (top right, like an iOS sheet) */}
+      <div className="flex justify-end px-4 pt-safe">
+        <button
+          onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate('/'))}
+          aria-label="Close"
+          className="p-3 -mr-1 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 transition"
+        >
+          <X className="w-5 h-5 text-slate-700" />
         </button>
       </div>
 
@@ -109,20 +113,21 @@ export default function Login() {
         {/* Email form */}
         <form onSubmit={handleEmail} className="space-y-3">
           {mode === 'signup' && (
-            <input className="input" placeholder="Full name" value={name} onChange={e => setName(e.target.value)} required />
+            <input className="input" placeholder="Full name" autoComplete="name" value={name} onChange={e => setName(e.target.value)} required />
           )}
-          <input className="input" type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} required />
+          <input className="input" type="email" autoComplete="email" inputMode="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} required />
           <div className="relative">
             <input
-              className="input pr-10"
+              className="input pr-12"
               type={showPw ? 'text' : 'password'}
               placeholder="Password"
+              autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
               minLength={6}
             />
-            <button type="button" onClick={() => setShowPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <button type="button" onClick={() => setShowPw(v => !v)} aria-label={showPw ? 'Hide password' : 'Show password'} className="absolute right-1 top-1/2 -translate-y-1/2 p-2.5 text-slate-400 hover:text-slate-600">
               {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
