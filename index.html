@@ -7,8 +7,18 @@
     <meta name="theme-color" content="#f97316" />
     <meta name="description" content="ChefThisWay – Discover homemade food near you" />
 
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7875388851226483" crossorigin="anonymous"></script>
+    <!-- Google AdSense: the meta tag keeps the site verified; the script loads on the website only.
+         The iOS app (user agent "ChefThisWayApp") gets no Google ad code, so it does no ad tracking. -->
+    <meta name="google-adsense-account" content="ca-pub-7875388851226483" />
+    <script>
+      if (!/ChefThisWayApp/.test(navigator.userAgent)) {
+        var s = document.createElement('script');
+        s.async = true;
+        s.crossOrigin = 'anonymous';
+        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7875388851226483';
+        document.head.appendChild(s);
+      }
+    </script>
 
     <title>ChefThisWay</title>
   </head>

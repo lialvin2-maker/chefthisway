@@ -1,24 +1,24 @@
 # Graph Report - ChefThisWay  (2026-10-29)
 
 ## Corpus Check
-- 34 files · ~25,166 words
+- 36 files · ~26,072 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 3 file(s) not represented in the graph (top: (none) 2, .css 1)
 
 ## Summary
-- 269 nodes · 585 edges · 15 communities (12 shown, 3 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.85)
+- 307 nodes · 655 edges · 16 communities (13 shown, 3 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `35f6eb9b`
+- Built from commit: `3678953b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - App.jsx
 - package.json
-- utils.js
+- PostDetail
 - ChefThisWay — Project Context for Claude Code
 - ChefThisWay — Project Context for Claude Code
 - Chat
@@ -29,16 +29,17 @@
 - ChefThisWay 🍽️
 - useAuth
 - keepalive.mjs
+- Coordinator
 
 ## God Nodes (most connected - your core abstractions)
 1. `useAuth()` - 31 edges
-2. `Home()` - 22 edges
-3. `react` - 19 edges
-4. `PostDetail()` - 19 edges
-5. `react-router-dom` - 18 edges
-6. `App()` - 18 edges
-7. `CreatePost()` - 18 edges
-8. `EditPost()` - 18 edges
+2. `Home()` - 28 edges
+3. `PostDetail()` - 20 edges
+4. `react` - 19 edges
+5. `CreatePost()` - 19 edges
+6. `EditPost()` - 19 edges
+7. `react-router-dom` - 18 edges
+8. `App()` - 18 edges
 9. `lucide-react` - 17 edges
 10. `supabase` - 16 edges
 
@@ -57,19 +58,19 @@
 ## Import Cycles
 - None detected.
 
-## Communities (15 total, 3 thin omitted)
+## Communities (16 total, 3 thin omitted)
 
 ### Community 0 - "App.jsx"
-Cohesion: 0.15
-Nodes (14): react-dom, react-router-dom, App(), ProtectedRoute(), Layout(), cn(), queryClient, AuthCallback() (+6 more)
+Cohesion: 0.13
+Nodes (16): react-dom, App(), ProtectedRoute(), Layout(), NAV, cn(), queryClient, AuthCallback() (+8 more)
 
 ### Community 1 - "package.json"
 Cohesion: 0.05
 Nodes (35): dependencies, clsx, lucide-react, react, react-dom, react-router-dom, @supabase/supabase-js, tailwind-merge (+27 more)
 
-### Community 2 - "utils.js"
-Cohesion: 0.15
-Nodes (19): DefaultAvatar(), GRADIENTS, FoodCard(), descriptionWithoutMarker(), displayPrice(), formatDate(), formatPrice(), formatTimeAgo() (+11 more)
+### Community 2 - "PostDetail"
+Cohesion: 0.24
+Nodes (6): fetchPost(), fetchReviews(), PostDetail(), handleTouchEnd(), lightboxNext(), lightboxPrev()
 
 ### Community 3 - "ChefThisWay — Project Context for Claude Code"
 Cohesion: 0.10
@@ -81,15 +82,15 @@ Nodes (20): 1. Install Node.js, 1. iOS / PWA (PRIORITY — do this next), 2. Clo
 
 ### Community 5 - "Chat"
 Cohesion: 0.18
-Nodes (9): ReviewForm(), handleSubmit(), uploadPhotos(), effectiveCooloffHours(), reviewEligibility(), Chat(), fetchConversation(), fetchMessages() (+1 more)
+Nodes (9): ReviewForm(), handleSubmit(), uploadPhotos(), formatDate(), formatTimeAgo(), Chat(), fetchConversation(), fetchMessages() (+1 more)
 
 ### Community 6 - "Home.jsx"
-Cohesion: 0.13
-Nodes (15): getDistance(), Chip(), CUISINE_KEYS, DIET_KEYS, fetchPosts(), formatNominatimLabel(), Home(), saveLocation() (+7 more)
+Cohesion: 0.10
+Nodes (29): AdSlot(), DefaultAvatar(), GRADIENTS, FoodCard(), CATEGORIES, descriptionWithoutMarker(), displayPrice(), effectiveCooloffHours() (+21 more)
 
 ### Community 7 - "AuthProvider"
-Cohesion: 0.15
-Nodes (15): AuthProvider(), fetchProfile(), refreshProfile(), signInWithEmail(), signInWithGoogle(), signOut(), signUpWithEmail(), readStoredSession() (+7 more)
+Cohesion: 0.11
+Nodes (20): AuthProvider(), fetchProfile(), refreshProfile(), signInWithApple(), signInWithEmail(), signInWithGoogle(), signOut(), signUpWithEmail() (+12 more)
 
 ### Community 8 - "CreatePost"
 Cohesion: 0.17
@@ -104,28 +105,32 @@ Cohesion: 0.17
 Nodes (11): ChefThisWay 🍽️, Deploy to Vercel (free hosting), Google AdSense, Pages, Quick Start (5 steps), Step 1 — Add your logo, Step 2 — Set up Supabase (free), Step 3 — Add your API keys (+3 more)
 
 ### Community 11 - "useAuth"
-Cohesion: 0.18
-Nodes (21): lucide-react, react, @tanstack/react-query, AdSlot(), REASONS, ReportDialog(), NAV, AuthContext (+13 more)
+Cohesion: 0.21
+Nodes (19): lucide-react, react, react-router-dom, @tanstack/react-query, REASONS, ReportDialog(), AuthContext, useAuth() (+11 more)
+
+### Community 15 - "Coordinator"
+Cohesion: 0.08
+Nodes (5): AuthenticationServices, ChefWebView, Coordinator, SwiftUI, WebKit
 
 ## Knowledge Gaps
-- **5 isolated node(s):** `@types/react`, `@types/react-dom`, `autoprefixer`, `postcss`, `tailwindcss`
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 125 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **8 isolated node(s):** `SwiftUI`, `WebKit`, `AuthenticationServices`, `@types/react`, `@types/react-dom` (+3 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 133 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `useAuth()` connect `useAuth` to `App.jsx`, `utils.js`, `Chat`, `Home.jsx`, `AuthProvider`, `CreatePost`, `EditPost`?**
-  _High betweenness centrality (0.087) - this node is a cross-community bridge._
-- **What connects `@types/react`, `@types/react-dom`, `autoprefixer` to the rest of the system?**
-  _5 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `useAuth()` connect `useAuth` to `App.jsx`, `PostDetail`, `Chat`, `Home.jsx`, `AuthProvider`, `CreatePost`, `EditPost`?**
+  _High betweenness centrality (0.067) - this node is a cross-community bridge._
+- **What connects `SwiftUI`, `WebKit`, `AuthenticationServices` to the rest of the system?**
+  _8 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `App.jsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.13438735177865613 - nodes in this community are weakly interconnected._
+- **Why does `CreatePost()` connect `CreatePost` to `App.jsx`, `useAuth`, `Home.jsx`?**
+  _High betweenness centrality (0.057) - this node is a cross-community bridge._
 - **Should `package.json` be split into smaller, more focused modules?**
   _Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected._
-- **Why does `CreatePost()` connect `CreatePost` to `App.jsx`, `useAuth`?**
-  _High betweenness centrality (0.072) - this node is a cross-community bridge._
-- **Should `utils.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.14814814814814814 - nodes in this community are weakly interconnected._
-- **Why does `EditPost()` connect `EditPost` to `App.jsx`, `useAuth`?**
-  _High betweenness centrality (0.072) - this node is a cross-community bridge._
+- **Why does `EditPost()` connect `EditPost` to `App.jsx`, `useAuth`, `Home.jsx`?**
+  _High betweenness centrality (0.057) - this node is a cross-community bridge._
 - **Should `ChefThisWay — Project Context for Claude Code` be split into smaller, more focused modules?**
   _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._

@@ -1,5 +1,5 @@
 {
-  "0": "App.jsx",
+  "0": "Profile.jsx",
   "1": "package.json",
   "2": "PostDetail",
   "3": "ChefThisWay — Project Context for Claude Code",
@@ -10,7 +10,7 @@
   "8": "CreatePost",
   "9": "EditPost",
   "10": "ChefThisWay 🍽️",
-  "11": "useAuth",
+  "11": "App.jsx",
   "12": "keepalive.mjs",
   "13": "tailwind.config.js",
   "14": "postcss.config.js",

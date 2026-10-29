@@ -1,7 +1,7 @@
 {
   "0": "App.jsx",
   "1": "package.json",
-  "2": "utils.js",
+  "2": "PostDetail",
   "3": "ChefThisWay — Project Context for Claude Code",
   "4": "ChefThisWay — Project Context for Claude Code",
   "5": "Chat",
@@ -13,5 +13,6 @@
   "11": "useAuth",
   "12": "keepalive.mjs",
   "13": "tailwind.config.js",
-  "14": "postcss.config.js"
+  "14": "postcss.config.js",
+  "15": "Coordinator"
 }
