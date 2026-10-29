@@ -157,15 +157,19 @@ export default function PostDetail() {
 
   return (
     <div className="bg-white min-h-full pb-24 md:pb-12">
-      {/* Top bar — back button (full-width sticky bar) */}
-      <div className="flex items-center px-4 pt-12 pb-2 sticky top-0 bg-white z-20">
+      {/* Back button — floats over the photo and takes no space */}
+      <div className="sticky top-0 z-20 h-0">
         <button
           onClick={() => navigate(-1)}
-          className="bg-white/80 backdrop-blur rounded-full p-2 shadow-sm hover:bg-gray-100 transition-colors"
+          aria-label="Back"
+          className="absolute left-3 bg-white/90 backdrop-blur rounded-full p-2.5 shadow-md hover:bg-white active:scale-95 transition"
+          style={{ top: 'max(0.75rem, env(safe-area-inset-top))' }}
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
       </div>
+      {/* Room for the button when there is no photo under it (and on desktop) */}
+      <div className={hasMedia ? 'hidden md:block h-16' : 'h-16'} />
 
       {/* Two-column container — stacks on mobile, splits on md+ */}
       <div className="md:max-w-6xl md:mx-auto md:flex md:gap-6 md:px-6">
