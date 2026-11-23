@@ -8,7 +8,8 @@ const AD_SLOT = 'YOUR_AD_SLOT_ID'
 
 // No box until a real slot ID is set (an empty "Advertisement" gap otherwise),
 // and never in the iOS app: AdSense is not allowed there (that needs AdMob).
-const SHOW_ADS = !AD_SLOT.startsWith('YOUR_') && !isNativeApp
+// window.ctwIsIOSApp: the shipped app uses a Safari user agent, so it is marked by an injected flag.
+const SHOW_ADS = !AD_SLOT.startsWith('YOUR_') && !isNativeApp && !window.ctwIsIOSApp
 
 export default function AdSlot() {
   const pushed = useRef(false)

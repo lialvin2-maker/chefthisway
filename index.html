@@ -8,10 +8,11 @@
     <meta name="description" content="ChefThisWay – Discover homemade food near you" />
 
     <!-- Google AdSense: the meta tag keeps the site verified; the script loads on the website only.
-         The iOS app (user agent "ChefThisWayApp") gets no Google ad code, so it does no ad tracking. -->
+         The iOS app (user agent "ChefThisWayApp", or window.ctwIsIOSApp set by the current app's
+         Safari-UA web view) gets no Google ad code, so it does no ad tracking. -->
     <meta name="google-adsense-account" content="ca-pub-7875388851226483" />
     <script>
-      if (!/ChefThisWayApp/.test(navigator.userAgent)) {
+      if (!/ChefThisWayApp/.test(navigator.userAgent) && !window.ctwIsIOSApp) {
         var s = document.createElement('script');
         s.async = true;
         s.crossOrigin = 'anonymous';
