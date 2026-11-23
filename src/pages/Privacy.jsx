@@ -17,7 +17,7 @@ export default function Privacy() {
       </div>
 
       <div className="px-5 py-6 max-w-2xl mx-auto space-y-6 text-sm text-slate-600 leading-relaxed">
-        <p className="text-xs text-slate-400">Last updated: October 2026</p>
+        <p className="text-xs text-slate-400">Last updated: November 2026</p>
 
         <section>
           <h2 className="font-bold text-slate-800 text-base mb-2">About ChefThisWay</h2>
@@ -49,14 +49,14 @@ export default function Privacy() {
             <li>To display your food listings to other users.</li>
             <li>To enable messaging between buyers and sellers.</li>
             <li>To improve and maintain the platform.</li>
-            <li>To show advertisements on the website through Google AdSense (not in the iPhone app).</li>
+            <li>To show advertisements: on the website through Google AdSense, and in the iPhone app (version 1.2 and later) through Google AdMob.</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="font-bold text-slate-800 text-base mb-2">Google AdSense & Cookies</h2>
+          <h2 className="font-bold text-slate-800 text-base mb-2">Google AdSense & Cookies (website)</h2>
           <p>
-            The iPhone app shows no ads and does no ad tracking. On the website, we use Google AdSense to display advertisements. Google may use cookies and similar
+            On the website, we use Google AdSense to display advertisements. Google may use cookies and similar
             technologies to show you ads based on your visits to this and other websites.
             You can opt out of personalized advertising by visiting{' '}
             <a href="https://www.google.com/settings/ads" className="text-brand-500 underline" target="_blank" rel="noopener noreferrer">
@@ -71,13 +71,40 @@ export default function Privacy() {
           </p>
         </section>
 
+        <section id="app-ads">
+          <h2 className="font-bold text-slate-800 text-base mb-2">Ads in the iPhone app (Google AdMob)</h2>
+          <p>
+            From version 1.2, the iPhone app shows a banner ad below the page and, now and then, a full-screen ad when you go
+            back to the feed after viewing a few listings. The ads come from Google AdMob. The website ads above are not loaded inside the app.
+          </p>
+          <ul className="list-disc pl-5 space-y-1 mt-2">
+            <li><strong>What AdMob collects:</strong> your device's advertising identifier (only if you allow tracking), IP address and the general area it points to, device and app information, and how you interact with ads. Google uses this to show ads, measure them, and prevent fraud.</li>
+            <li><strong>Tracking (App Tracking Transparency):</strong> on first launch the app asks whether it may track your activity across other companies' apps and websites. If you tap Allow, AdMob may use your advertising identifier to show ads that fit you better. If you tap Ask App Not to Track, you still see ads, but they are not personalised with that identifier. The app works the same either way.</li>
+            <li><strong>Change your choice:</strong> iPhone Settings → Privacy & Security → Tracking → ChefThisWay. You can also turn off "Allow Apps to Request to Track" there for all apps.</li>
+            <li><strong>Europe, UK and Switzerland:</strong> Google asks for your ad consent before any ad. In the app you can change it any time with the button below.</li>
+          </ul>
+          {window.webkit?.messageHandlers?.adPrivacy && (
+            <button onClick={() => window.webkit.messageHandlers.adPrivacy.postMessage({})}
+              className="mt-3 px-4 py-2 rounded-full border border-brand-500 text-brand-500 font-semibold">
+              Ad privacy choices
+            </button>
+          )}
+          <p className="mt-2">
+            Learn more in{' '}
+            <a href="https://policies.google.com/technologies/partner-sites" className="text-brand-500 underline" target="_blank" rel="noopener noreferrer">
+              how Google uses data from partner apps
+            </a>.
+          </p>
+        </section>
+
         <section>
           <h2 className="font-bold text-slate-800 text-base mb-2">Third-Party Services</h2>
           <p>We use the following third-party services to operate ChefThisWay:</p>
           <ul className="list-disc pl-5 space-y-1 mt-1">
             <li><strong>Supabase</strong> — database, authentication, and file storage.</li>
             <li><strong>Netlify</strong> — website hosting.</li>
-            <li><strong>Google AdSense</strong> — advertising on the website only.</li>
+            <li><strong>Google AdSense</strong> — advertising on the website.</li>
+            <li><strong>Google AdMob</strong> — advertising in the iPhone app (version 1.2 and later).</li>
             <li><strong>Google Sign-In</strong> and <strong>Sign in with Apple</strong> — signing in, if you choose them.</li>
             <li><strong>OpenStreetMap (Nominatim)</strong> — turns a location you choose into an address.</li>
           </ul>
